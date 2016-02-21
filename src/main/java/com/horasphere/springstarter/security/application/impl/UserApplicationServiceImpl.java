@@ -1,7 +1,8 @@
 package com.horasphere.springstarter.security.application.impl;
 
+import com.horasphere.springstarter.security.application.SignupCommand;
 import com.horasphere.springstarter.security.application.UserApplicationService;
-import com.horasphere.springstarter.security.domain.InvalidPasswordException;
+import com.horasphere.springstarter.security.domain.PasswordStrengthException;
 import com.horasphere.springstarter.security.domain.PasswordStrengthPolicy;
 import com.horasphere.springstarter.security.domain.User;
 import com.horasphere.springstarter.security.domain.UserRepository;
@@ -10,8 +11,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 public class UserApplicationServiceImpl implements UserApplicationService
 {
@@ -41,17 +40,22 @@ public class UserApplicationServiceImpl implements UserApplicationService
     }
 
     @Transactional
-    public void signUp(String email, String clearPassword, String firsName, String lastName, List<String> roles) throws InvalidPasswordException
+    public void signup(SignupCommand signupCommand) throws PasswordStrengthException
     {
-        String error = passwordStrengthPolicy.validate(clearPassword);
+        String error = passwordStrengthPolicy.validate(signupCommand.getClearPassword());
 
         if(error != null) {
-            throw new InvalidPasswordException(error);
+            throw new PasswordStrengthException(error);
         }
 
-        String cryptedPassword = passwordEncoder.encode(clearPassword);
+        String cryptedPassword = passwordEncoder.encode(signupCommand.getClearPassword());
 
-        User user = new User(email, cryptedPassword, firsName, lastName, roles, true);
+        User user = new User(signupCommand.getEmail(),
+            cryptedPassword,
+            signupCommand.getFirsName(),
+            signupCommand.getLastName(),
+            signupCommand.getRoles(),
+            true);
 
         userRepository.create(user);
     }

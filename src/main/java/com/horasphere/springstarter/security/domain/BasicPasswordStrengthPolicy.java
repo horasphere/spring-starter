@@ -1,10 +1,10 @@
 package com.horasphere.springstarter.security.domain;
 
-public class BasicPasswordStrenghtPolicy implements PasswordStrengthPolicy
+public class BasicPasswordStrengthPolicy implements PasswordStrengthPolicy
 {
     int minLength;
 
-    public BasicPasswordStrenghtPolicy(int minLength)
+    public BasicPasswordStrengthPolicy(int minLength)
     {
         this.minLength = minLength;
     }
