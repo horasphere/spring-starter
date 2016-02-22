@@ -1,5 +1,6 @@
 package com.horasphere.springstarter.web.rest;
 
+import com.horasphere.springstarter.security.application.SignupCommand;
 import com.horasphere.springstarter.security.application.UserApplicationService;
 import com.horasphere.springstarter.security.domain.PasswordStrengthException;
 import com.horasphere.springstarter.web.models.UserDTO;
@@ -37,11 +38,13 @@ public class UserController
     @RequestMapping(value = "/users/signup", method = RequestMethod.POST)
     ResponseEntity signUp(@RequestBody Map<String, Object> params) throws PasswordStrengthException
     {
-        userApplicationService.signup((String) params.get("email"),
-                (String) params.get("password"),
-                "",
-                "",
-                (ArrayList) params.get("roles"));
+        SignupCommand signupCommand = new SignupCommand((String) params.get("email"),
+            (String) params.get("password"),
+            (String) params.get("firstName"),
+            (String) params.get("lastName"),
+            (ArrayList) params.get("roles"));
+
+        userApplicationService.signup(signupCommand);
 
         return new ResponseEntity("OK", HttpStatus.OK);
 

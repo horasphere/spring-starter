@@ -13,3 +13,7 @@ hs_err_pid*
 
 .idea/
 *.iml
+
+front-end/dist
+front-end/build
+front-end/node_modules
