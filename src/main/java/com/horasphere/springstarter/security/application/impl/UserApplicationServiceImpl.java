@@ -58,7 +58,9 @@ public class UserApplicationServiceImpl implements UserApplicationService
 
         String cryptedPassword = encodePassword(signupCommand.getClearPassword());
 
-        User user = new User(signupCommand.getEmail(),
+        //TODO id
+        User user = new User(0,
+            signupCommand.getEmail(),
             cryptedPassword,
             signupCommand.getFirsName(),
             signupCommand.getLastName(),

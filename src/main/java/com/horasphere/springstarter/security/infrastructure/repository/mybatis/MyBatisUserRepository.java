@@ -15,8 +15,12 @@ public class MyBatisUserRepository implements UserRepository
     @Autowired
     UserMapper userMapper;
 
-    public void create(User user) {
-        userMapper.insert(new UserConverter().convert(user));
+    public int create(User user) {
+        DBUser dbUser = new UserConverter().convert(user);
+
+        userMapper.insert(dbUser);
+
+        return dbUser.getId();
     }
 
     public List<User> findAll()
@@ -34,7 +38,8 @@ public class MyBatisUserRepository implements UserRepository
         @Override
         public DBUser convert(User user)
         {
-            return new DBUser(user.getEmail(),
+            return new DBUser(user.getId(),
+                user.getEmail(),
                 user.getPassword(),
                 user.getFirstName(),
                 user.getLastName(),
@@ -47,7 +52,8 @@ public class MyBatisUserRepository implements UserRepository
         @Override
         public User convert(DBUser dbUser)
         {
-            return new User(dbUser.getEmail(),
+            return new User(dbUser.getId(),
+                dbUser.getEmail(),
                 dbUser.getPassword(),
                 dbUser.getFirst_name(),
                 dbUser.getLast_name(),

@@ -32,7 +32,7 @@ public class UserController
     @RequestMapping("/users/email")
     UserDTO users(@RequestParam(value = "email", required = true) String email) {
         System.out.println("Email: " + email);
-        return userDTORepository.findOne(email);
+        return userDTORepository.findByEmail(email);
     }
 
     @RequestMapping(value = "/users/signup", method = RequestMethod.POST)

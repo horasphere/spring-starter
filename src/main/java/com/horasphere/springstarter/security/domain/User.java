@@ -10,6 +10,7 @@ import java.util.List;
 
 public class User implements UserDetails
 {
+    private int id;
     private String email;
     private String password;
     private String firstName;
@@ -17,14 +18,20 @@ public class User implements UserDetails
     private List<String> roles;
     private boolean enabled;
 
-    public User(String email, String password, String firstName, String lastName, List<String> roles, boolean enabled)
+    public User(int id, String email, String password, String firstName, String lastName, List<String> roles, boolean enabled)
     {
+        this.id = id;
         this.email = email;
         this.firstName = firstName;
         this.password = password;
         this.lastName = lastName;
         this.roles = roles;
         this.enabled = enabled;
+    }
+
+    public int getId()
+    {
+        return id;
     }
 
     public String getEmail()

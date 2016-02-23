@@ -5,7 +5,8 @@
 <mapper namespace="com.horasphere.springstarter.security.infrastructure.repository.mybatis.mapper.UserMapper">
 
     <resultMap id="userResultMap" type="DBUser">
-        <id property="email" column="email"/>
+        <id property="id" column="id"/>
+        <result property="email" column="email"/>
         <result property="password" column="password"/>
         <result property="first_name" column="first_name"/>
         <result property="last_name" column="last_name"/>
@@ -18,18 +19,21 @@
     </select>
 
     <select id="selectRoles" resultType="String">
-        select role from user_roles where user_email = #{email}
+        select role from user_roles where user_id = #{id}
     </select>
 
     <select id="selectByEmail" resultMap="userResultMap">
         select * from users where email = #{email}
     </select>
 
-    <insert id="insertUser" parameterType="DBUser">
+    <insert id="insertUser" useGeneratedKeys="true" parameterType="DBUser">
+        <!--<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">-->
+            <!--SELECT LAST_INSERT_ID()-->
+        <!--</selectKey>-->
         insert into users (email, password, first_name, last_name, enabled) values( #{email}, #{password}, #{first_name}, #{last_name}, #{enabled});
     </insert>
 
     <insert id="insertRole" parameterType="DBUserRole">
-        insert into user_roles (user_email, role) values( #{email}, #{role});
+        insert into user_roles (user_id, role) values( #{id}, #{role});
     </insert>
 </mapper>

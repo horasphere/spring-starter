@@ -18,7 +18,7 @@ public class UserMapper
 
         for(String role: dbUser.getRoles())
         {
-            insertRole(new DBUserRole(dbUser.getEmail(), role));
+            insertRole(new DBUserRole(dbUser.getId(), role));
         }
     }
 

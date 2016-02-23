@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface UserRepository
 {
-    void create(User user);
+    int create(User user);
     List<User> findAll();
     User findByEmail(String email);
 }

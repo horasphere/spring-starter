@@ -8,17 +8,28 @@ import java.util.List;
 public class UserDTO
 {
     @Id
+    private int id;
     private String email;
     private String firstName;
     private String lastName;
 
-    @CollectionTable(name="user_roles", joinColumns = @JoinColumn(name = "user_email", referencedColumnName = "email"))
+    @CollectionTable(name="user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
     @ElementCollection(fetch = FetchType.EAGER)
     @Column(name="role")
     List<String> roles;
 
     public UserDTO()
     {
+    }
+
+    public int getId()
+    {
+        return id;
+    }
+
+    public void setId(int id)
+    {
+        this.id = id;
     }
 
     public String getFirstName()
