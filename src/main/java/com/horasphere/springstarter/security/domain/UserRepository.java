@@ -4,7 +4,9 @@ import java.util.List;
 
 public interface UserRepository
 {
-    int create(User user);
+    String nextId();
+    void create(User user);
+    User findById(String id);
     List<User> findAll();
     User findByEmail(String email);
 }

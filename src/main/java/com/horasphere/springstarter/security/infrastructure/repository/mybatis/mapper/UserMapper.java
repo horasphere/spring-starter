@@ -1,6 +1,5 @@
 package com.horasphere.springstarter.security.infrastructure.repository.mybatis.mapper;
 
-import com.horasphere.springstarter.security.domain.User;
 import com.horasphere.springstarter.security.infrastructure.repository.mybatis.dbo.DBUser;
 import com.horasphere.springstarter.security.infrastructure.repository.mybatis.dbo.DBUserRole;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -32,5 +31,9 @@ public class UserMapper
 
     public DBUser selectByEmail(String email) {
         return this.sqlSessionTemplate.selectOne("selectByEmail", email);
+    }
+
+    public DBUser selectById(String id) {
+        return this.sqlSessionTemplate.selectOne("selectById", id);
     }
 }

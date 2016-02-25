@@ -1,6 +1,6 @@
 package com.horasphere.springstarter.security.domain;
 
-public class PasswordStrengthException extends Exception
+public class PasswordStrengthException extends RuntimeException
 {
     public PasswordStrengthException(String message)
     {

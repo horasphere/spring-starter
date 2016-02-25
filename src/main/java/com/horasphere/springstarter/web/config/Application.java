@@ -1,9 +1,12 @@
 package com.horasphere.springstarter.web.config;
 
+import com.horasphere.shared.ddd.UUIDSequenceGenerator;
 import com.horasphere.springstarter.security.application.UserApplicationService;
 import com.horasphere.springstarter.security.application.impl.UserApplicationServiceImpl;
 import com.horasphere.springstarter.security.domain.BasicPasswordStrengthPolicy;
+import com.horasphere.springstarter.security.domain.EncryptionService;
 import com.horasphere.springstarter.security.domain.UserRepository;
+import com.horasphere.springstarter.security.infrastructure.PasswordEncoderEncryptionService;
 import com.horasphere.springstarter.security.infrastructure.repository.mybatis.mapper.UserMapper;
 import com.horasphere.springstarter.security.infrastructure.repository.mybatis.MyBatisUserRepository;
 import com.horasphere.springstarter.web.rest.HomeController;
@@ -16,14 +19,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 @SpringBootApplication
 @Import(SecurityConfig.class)
 @EntityScan(basePackages = "com.horasphere.springstarter.web.models")
 @EnableJpaRepositories(basePackages = "com.horasphere.springstarter.web.models")
-public class Application
+public class Application extends WebMvcConfigurerAdapter
 {
-
+    private final int MINIMUM_PASSWORD_LENGTH = 6;
     public static void main(String[] args) {
 
 	int i = 0;
@@ -39,6 +44,22 @@ public class Application
     }
 
     @Bean
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    EncryptionService encryptionService() {
+
+        return new PasswordEncoderEncryptionService(passwordEncoder());
+    }
+
+    @Bean
+    UserApplicationService userApplicationService() {
+        return new UserApplicationServiceImpl(encryptionService(), userRepository(), new BasicPasswordStrengthPolicy(MINIMUM_PASSWORD_LENGTH));
+    }
+
+    @Bean
     HomeController homeController() {
         return new HomeController();
     }
@@ -50,14 +71,7 @@ public class Application
 
     @Bean
     UserRepository userRepository() {
-        return new MyBatisUserRepository();
-    }
-
-    @Bean
-    UserApplicationService userApplicationService() {
-        BasicPasswordStrengthPolicy passwordStrenghtPolicy = new BasicPasswordStrengthPolicy(6);
-
-        return new UserApplicationServiceImpl(passwordStrenghtPolicy);
+        return new MyBatisUserRepository(userMapper(), new UUIDSequenceGenerator());
     }
 
     @Bean

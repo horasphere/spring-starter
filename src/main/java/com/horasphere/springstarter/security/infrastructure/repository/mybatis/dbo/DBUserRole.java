@@ -2,28 +2,28 @@ package com.horasphere.springstarter.security.infrastructure.repository.mybatis.
 
 public class DBUserRole
 {
-    private int id;
+    private String userId;
     private String role;
 
     public DBUserRole()
     {
-
+        super();
     }
 
-    public DBUserRole(int id, String role)
+    public DBUserRole(String userId, String role)
     {
-        this.id = id;
+        this.userId = userId;
         this.role = role;
     }
 
-    public int getId()
+    public String getUserId()
     {
-        return id;
+        return userId;
     }
 
-    public void setId(int id)
+    public void setUserId(String userId)
     {
-        this.id = id;
+        this.userId = userId;
     }
 
     public String getRole()

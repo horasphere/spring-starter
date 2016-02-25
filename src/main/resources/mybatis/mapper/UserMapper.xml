@@ -18,6 +18,10 @@
         select  * from users
     </select>
 
+    <select id="selectById" resultMap="userResultMap">
+        select * from users where id = #{id}
+    </select>
+
     <select id="selectRoles" resultType="String">
         select role from user_roles where user_id = #{id}
     </select>
@@ -27,10 +31,7 @@
     </select>
 
     <insert id="insertUser" useGeneratedKeys="true" parameterType="DBUser">
-        <!--<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">-->
-            <!--SELECT LAST_INSERT_ID()-->
-        <!--</selectKey>-->
-        insert into users (email, password, first_name, last_name, enabled) values( #{email}, #{password}, #{first_name}, #{last_name}, #{enabled});
+        insert into users (id, email, password, first_name, last_name, enabled) values(#{id}, #{email}, #{password}, #{first_name}, #{last_name}, #{enabled});
     </insert>
 
     <insert id="insertRole" parameterType="DBUserRole">

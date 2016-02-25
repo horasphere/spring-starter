@@ -1,37 +1,48 @@
 package com.horasphere.springstarter.security.domain;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import com.horasphere.shared.EmailValidator;
+import com.horasphere.shared.CustomAssert;
+import com.horasphere.shared.ddd.Entity;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
-public class User implements UserDetails
+import java.util.*;
+
+public class User extends Entity
 {
-    private int id;
     private String email;
     private String password;
     private String firstName;
     private String lastName;
-    private List<String> roles;
+    private Set<String> roles;
     private boolean enabled;
 
-    public User(int id, String email, String password, String firstName, String lastName, List<String> roles, boolean enabled)
+    public User(String id, String email, String password, String firstName, String lastName,
+                List<String> roles, boolean enabled)
     {
-        this.id = id;
-        this.email = email;
-        this.firstName = firstName;
+        super(id);
+
+        this.setEmail(email);
+
+        CustomAssert.assertNotNullOrEmpty(password, "password");
+        CustomAssert.assertNotNullOrEmpty(firstName, "firstName");
+        CustomAssert.assertNotNullOrEmpty(lastName, "lastName");
+
         this.password = password;
+        this.firstName = firstName;
         this.lastName = lastName;
-        this.roles = roles;
+
+        this.roles = (roles == null) ? new HashSet<String>() : new HashSet<String>(roles);
         this.enabled = enabled;
     }
 
-    public int getId()
-    {
-        return id;
+    private void setEmail(String email) {
+        CustomAssert.assertNotNullOrEmpty(email, "Email must be defined.");
+
+        if(!new EmailValidator().validate(email)) {
+            throw new IllegalArgumentException("Invalid email: " + email);
+        }
+
+        this.email = email;
     }
 
     public String getEmail()
@@ -54,43 +65,47 @@ public class User implements UserDetails
         return lastName;
     }
 
-    public List<GrantedAuthority> getAuthorities()
-    {
-        List<GrantedAuthority> result = new ArrayList<GrantedAuthority>();
-
-        for(String role: roles)
-            result.add(new SimpleGrantedAuthority(role));
-
-        return Collections.unmodifiableList(result);
-    }
-
     public List<String> getRoles()
     {
-        return Collections.unmodifiableList(roles);
+        return new ArrayList<String>(roles);
     }
 
-    public String getUsername()
-    {
-        return email;
+    public void addRole(String role) {
+        this.roles.add(role);
     }
 
-    public boolean isAccountNonExpired()
-    {
-        return true;
-    }
-
-    public boolean isAccountNonLocked()
-    {
-        return true;
-    }
-
-    public boolean isCredentialsNonExpired()
-    {
-        return true;
+    public void removeRole(String role) {
+        this.roles.remove(role);
     }
 
     public boolean isEnabled()
     {
         return enabled;
+    }
+
+    public void disable() {
+        this.enabled = false;
+    }
+
+    public void enable() {
+        this.enabled = true;
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        User user = (User) o;
+
+        return email.equals(user.email);
+
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return email.hashCode();
     }
 }

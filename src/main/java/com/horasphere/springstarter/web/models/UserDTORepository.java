@@ -8,5 +8,6 @@ import java.util.List;
 public interface UserDTORepository extends Repository<UserDTO, Integer>
 {
     List<UserDTO> findAll();
+    UserDTO findById(String id);
     UserDTO findByEmail(String email);
 }

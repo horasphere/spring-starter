@@ -4,7 +4,7 @@ import java.util.List;
 
 public class DBUser
 {
-    private int id;
+    private String id;
     private String email;
     private String password;
     private String first_name;
@@ -16,8 +16,9 @@ public class DBUser
     {
     }
 
-    public DBUser(int id, String email, String password, String first_name, String last_name, List<String> roles,boolean enabled)
+    public DBUser(String id, String email, String password, String first_name, String last_name, List<String> roles,boolean enabled)
     {
+        this.id = id;
         this.email = email;
         this.password = password;
         this.first_name = first_name;
@@ -26,12 +27,12 @@ public class DBUser
         this.enabled = enabled;
     }
 
-    public int getId()
+    public String getId()
     {
         return id;
     }
 
-    public void setId(int id)
+    public void setId(String id)
     {
         this.id = id;
     }

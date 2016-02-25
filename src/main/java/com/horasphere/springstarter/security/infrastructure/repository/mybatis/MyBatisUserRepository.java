@@ -1,26 +1,42 @@
 package com.horasphere.springstarter.security.infrastructure.repository.mybatis;
 
 
+import com.horasphere.shared.ddd.SequenceGenerator;
 import com.horasphere.springstarter.security.domain.User;
 import com.horasphere.springstarter.security.domain.UserRepository;
 import com.horasphere.springstarter.security.infrastructure.repository.mybatis.dbo.DBUser;
 import com.horasphere.springstarter.security.infrastructure.repository.mybatis.mapper.UserMapper;
-import com.horasphere.springstarter.shared.utils.Converter;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.horasphere.shared.utils.Converter;
 
 import java.util.List;
 
 public class MyBatisUserRepository implements UserRepository
 {
-    @Autowired
     UserMapper userMapper;
+    SequenceGenerator sequenceGenerator;
 
-    public int create(User user) {
+    public MyBatisUserRepository(
+            UserMapper userMapper, SequenceGenerator sequenceGenerator)
+    {
+        this.userMapper = userMapper;
+        this.sequenceGenerator = sequenceGenerator;
+    }
+
+    @Override
+    public String nextId()
+    {
+        return sequenceGenerator.generateNextValue();
+    }
+
+    public User findById(String id)
+    {
+        return null;
+    }
+
+    public void create(User user) {
         DBUser dbUser = new UserConverter().convert(user);
 
         userMapper.insert(dbUser);
-
-        return dbUser.getId();
     }
 
     public List<User> findAll()
@@ -38,7 +54,7 @@ public class MyBatisUserRepository implements UserRepository
         @Override
         public DBUser convert(User user)
         {
-            return new DBUser(user.getId(),
+            return new DBUser(user.id(),
                 user.getEmail(),
                 user.getPassword(),
                 user.getFirstName(),

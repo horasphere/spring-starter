@@ -2,47 +2,27 @@ package com.horasphere.springstarter.security.application.impl;
 
 import com.horasphere.springstarter.security.application.SignupCommand;
 import com.horasphere.springstarter.security.application.UserApplicationService;
-import com.horasphere.springstarter.security.domain.PasswordStrengthException;
-import com.horasphere.springstarter.security.domain.PasswordStrengthPolicy;
-import com.horasphere.springstarter.security.domain.User;
-import com.horasphere.springstarter.security.domain.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import com.horasphere.springstarter.security.domain.*;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 public class UserApplicationServiceImpl implements UserApplicationService
 {
-    @Autowired
-    PasswordEncoder passwordEncoder;
-
-    @Autowired
+    EncryptionService encryptionService;
     UserRepository userRepository;
-
     PasswordStrengthPolicy passwordStrengthPolicy;
 
-    public UserApplicationServiceImpl(PasswordStrengthPolicy passwordStrengthPolicy)
+    public UserApplicationServiceImpl(EncryptionService encryptionService,
+                                      UserRepository userRepository,
+                                      PasswordStrengthPolicy passwordStrengthPolicy)
     {
+        this.encryptionService = encryptionService;
+        this.userRepository = userRepository;
         this.passwordStrengthPolicy = passwordStrengthPolicy;
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException
-    {
-
-        User user = userRepository.findByEmail(username);
-
-        if(user == null) {
-            throw new UsernameNotFoundException("Email not found...");
-        }
-
-        return user;
-    }
-
     @Transactional
-    public void signup(SignupCommand signupCommand) throws PasswordStrengthException
+    public String signup(SignupCommand signupCommand)
     {
         Assert.notNull(signupCommand.getEmail());
         Assert.notNull(signupCommand.getClearPassword());
@@ -56,10 +36,9 @@ public class UserApplicationServiceImpl implements UserApplicationService
             throw new PasswordStrengthException(error);
         }
 
-        String cryptedPassword = encodePassword(signupCommand.getClearPassword());
+        String cryptedPassword = encryptionService.encrypt(signupCommand.getClearPassword());
 
-        //TODO id
-        User user = new User(0,
+        User user = new User(userRepository.nextId(),
             signupCommand.getEmail(),
             cryptedPassword,
             signupCommand.getFirsName(),
@@ -68,11 +47,7 @@ public class UserApplicationServiceImpl implements UserApplicationService
             true);
 
         userRepository.create(user);
-    }
 
-    @Override
-    public String encodePassword(String password)
-    {
-        return passwordEncoder.encode(password);
+        return user.id();
     }
 }
